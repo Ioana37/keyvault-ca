@@ -19,12 +19,12 @@ Clone this repo and then ```cd KeyVaultCA```
 ## Setup KeyVault access for the API façade
 
 1. Create a Service Principal in AAD  
-```az ad sp create-for-rbac --name api-facade-for-keyvault-ca --skip-assignment=true```  
+```az ad sp create-for-rbac --name <SP_NAME> --skip-assignment=true```  
 You will get an output containing ```appId``` and ```password```, please note them for later.
 
 2. Give the Service Principal accesss to KeyVault keys and certificates:  
 ```az keyvault set-policy --name <KEYVAULT_NAME> \```  
-```--spn <your appId> \```  
+```--spn <YOUR_APPID> \```  
 ```--key-permissions sign \```  
 ``` --certificate-permissions get list update create```  
 
@@ -67,7 +67,7 @@ You need to provide following environment variables:
 ```EstUser``` - Username for the EST enpoint (using Basic Auth for now, will update to use client certs).  
 ```EstPassword``` - Password for the EST endpoint (using Basic Auth for now, will update to use client certs).  
 ```CertValidityInDays``` - Specifies validity period for issued certs.  
-```AuthMode``` - Authentication mode for the EST API. Pissible values are: "x509" and "Basic". In case you choose "x509", put your trusted CA certs into the ```KeyVaultCA.Web\TrustedCAs``` folder. Make sure to specify CopyToOutput.  
+```AuthMode``` - Authentication mode for the EST API. Possible values are: "x509" and "Basic". In case you choose "x509", put your trusted CA certs into the ```KeyVaultCA.Web\TrustedCAs``` folder. Make sure to specify CopyToOutput.  
 
 The implementation returns IssuingCA via the ```/cacerts``` endpoint.  
 Refer to [this repo](https://github.com/arlotito/iot-edge-1.2-tpm) for details on IoT Edge configuration, including PKCS#11 and EST.
