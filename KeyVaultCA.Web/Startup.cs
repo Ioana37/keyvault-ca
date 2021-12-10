@@ -30,7 +30,7 @@ namespace KeyVaultCA.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var caConfig = new CAConfuguration();
+            var caConfig = new CAConfiguration();
 
             var keyVaultServiceClient = new KeyVaultServiceClient($"https://{caConfig.KeyVaultName}.vault.azure.net/");
             keyVaultServiceClient.SetAuthenticationClientCredential(caConfig.AppId, caConfig.Secret);
