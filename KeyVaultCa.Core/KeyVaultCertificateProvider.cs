@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Pkcs;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,12 @@ namespace KeyVaultCa.Core
     public class KeyVaultCertificateProvider : IKeyVaultCertificateProvider
     {
         private readonly KeyVaultServiceClient _keyVaultServiceClient;
+        private readonly ILogger _logger;
 
-        public KeyVaultCertificateProvider(KeyVaultServiceClient keyVaultServiceClient)
+        public KeyVaultCertificateProvider(KeyVaultServiceClient keyVaultServiceClient, ILogger<KeyVaultCertificateProvider> logger)
         {
             _keyVaultServiceClient = keyVaultServiceClient;
+            _logger = logger;
         }
 
         public async Task CreateCACertificateAsync(string issuerCertificateName, string subject)
@@ -41,6 +44,7 @@ namespace KeyVaultCa.Core
 
         public async Task<IList<X509Certificate2>> GetPublicCertificatesByName(IEnumerable<string> certNames)
         {
+            _logger.LogDebug("Call GetPublicCertificatesByName method" + Environment.NewLine);
             var certs = new List<X509Certificate2>();
 
             foreach (var issuerName in certNames)
@@ -65,13 +69,23 @@ namespace KeyVaultCa.Core
             int validityInDays,
             bool caCert = false)
         {
+            _logger.LogInformation("Preparing certificate Request" + Environment.NewLine);
+
+            _logger.LogDebug("certificateRequest " + certificateRequest.ToString() + Environment.NewLine);
+
             var pkcs10CertificationRequest = new Pkcs10CertificationRequest(certificateRequest);
+
+            _logger.LogDebug("pkcs10CertificationRequest get encoded" + pkcs10CertificationRequest.GetEncoded() + Environment.NewLine);
+
             if (!pkcs10CertificationRequest.Verify())
             {
                 throw new ArgumentException("CSR signature invalid.");
             }
 
             var info = pkcs10CertificationRequest.GetCertificationRequestInfo();
+
+            _logger.LogDebug("info  " + info.ToString() + Environment.NewLine);
+
             var notBefore = DateTime.UtcNow.AddDays(-1);
 
             var certBundle = await _keyVaultServiceClient.GetCertificateAsync(issuerCertificateName).ConfigureAwait(false);
