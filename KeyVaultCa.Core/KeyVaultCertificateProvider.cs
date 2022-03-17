@@ -44,7 +44,7 @@ namespace KeyVaultCa.Core
 
         public async Task<IList<X509Certificate2>> GetPublicCertificatesByName(IEnumerable<string> certNames)
         {
-            _logger.LogDebug("Call GetPublicCertificatesByName method" + Environment.NewLine);
+            _logger.LogDebug("Call GetPublicCertificatesByName method");
             var certs = new List<X509Certificate2>();
 
             foreach (var issuerName in certNames)
@@ -69,13 +69,11 @@ namespace KeyVaultCa.Core
             int validityInDays,
             bool caCert = false)
         {
-            _logger.LogInformation("Preparing certificate Request" + Environment.NewLine);
+            _logger.LogInformation("Preparing certificate request");
 
-            _logger.LogDebug("certificateRequest " + certificateRequest.ToString() + Environment.NewLine);
+            _logger.LogDebug("The content of the certificate request is: {content} ", certificateRequest.ToString());
 
             var pkcs10CertificationRequest = new Pkcs10CertificationRequest(certificateRequest);
-
-            _logger.LogDebug("pkcs10CertificationRequest get encoded" + pkcs10CertificationRequest.GetEncoded() + Environment.NewLine);
 
             if (!pkcs10CertificationRequest.Verify())
             {
@@ -84,7 +82,7 @@ namespace KeyVaultCa.Core
 
             var info = pkcs10CertificationRequest.GetCertificationRequestInfo();
 
-            _logger.LogDebug("info  " + info.ToString() + Environment.NewLine);
+            _logger.LogDebug("Certification request info is:  {info}", info.ToString());
 
             var notBefore = DateTime.UtcNow.AddDays(-1);
 

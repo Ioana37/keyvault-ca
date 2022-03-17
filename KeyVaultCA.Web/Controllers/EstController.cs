@@ -34,8 +34,8 @@ namespace KeyVaultCA.Web.Controllers
         [Route("ca/.well-known/est/cacerts")]
         public async Task<IActionResult> GetCACertsAsync()
         {
-            _logger.LogInformation("Call Cacerts endpoint");
-            var caCerts = await _keyVaultCertProvider.GetPublicCertificatesByName(new [] { _configuration.IssuingCA });
+            _logger.LogDebug("Call 'CA certs' endpoint");
+            var caCerts = await _keyVaultCertProvider.GetPublicCertificatesByName(new[] { _configuration.IssuingCA });
             var pkcs7 = EncodeCertificatesAsPkcs7(caCerts.ToArray());
 
             return Content(pkcs7, PKCS7_MIME_TYPE);
@@ -48,15 +48,15 @@ namespace KeyVaultCA.Web.Controllers
         [Consumes(PKCS10_MIME_TYPE)]
         public async Task<IActionResult> EnrollAsync()
         {
-            _logger.LogInformation("Call Simple enroll endpoint" + Environment.NewLine);
+            _logger.LogDebug("Call 'Simple Enroll' endpoint");
 
             var cleanedUpBody = await GetAsn1StructureFromBody();
 
-            _logger.LogDebug("cleanedUpBody " + cleanedUpBody + Environment.NewLine);
+            _logger.LogDebug("cleanedUpBody {body} ", cleanedUpBody);
 
             var caCert = Request.Path.StartsWithSegments("/ca");
 
-            _logger.LogInformation("Is caCert:" + caCert + Environment.NewLine);
+            _logger.LogInformation("Is a CA certificate: {flag} ", caCert);
 
             var cert = await _keyVaultCertProvider.SigningRequestAsync(
                 Convert.FromBase64String(cleanedUpBody), _configuration.IssuingCA, _configuration.CertValidityInDays, caCert);
@@ -65,7 +65,7 @@ namespace KeyVaultCA.Web.Controllers
             return Content(pkcs7, PKCS7_MIME_TYPE);
         }
 
-        private string EncodeCertificatesAsPkcs7(X509Certificate2 [] certs)
+        private string EncodeCertificatesAsPkcs7(X509Certificate2[] certs)
         {
             var collection = new X509Certificate2Collection(certs);
             var data = collection.Export(X509ContentType.Pkcs7);
@@ -81,19 +81,20 @@ namespace KeyVaultCA.Web.Controllers
             using var reader = new StreamReader(Request.Body, Encoding.UTF8);
             var body = await reader.ReadToEndAsync();
 
-            _logger.LogDebug("body " + body.ToString() + Environment.NewLine);
+            _logger.LogDebug("Request body is: {body} ", body.ToString());
 
             // Need to handle different types of Line Breaks
             var tokens = body.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                      
-            if(tokens.Length > 1)
+
+            if (tokens.Length > 1)
             {
                 return string.Join("", tokens);
             }
+            var token = tokens.FirstOrDefault();
 
-            _logger.LogDebug("tokens " + tokens.FirstOrDefault());
+            _logger.LogDebug("The first (or default) token is: {token} ", token);
 
-            return tokens.FirstOrDefault();
+            return token;
         }
     }
 }
