@@ -69,9 +69,7 @@ namespace KeyVaultCa.Core
             int validityInDays,
             bool caCert = false)
         {
-            _logger.LogInformation("Preparing certificate request with the name {name}, {days} days validity period and 'is a CA certificate' flag set to {flag}.", issuerCertificateName, validityInDays, caCert);
-
-            _logger.LogDebug("The content of the certificate request is: {content}.", certificateRequest.ToString());
+            _logger.LogInformation("Preparing certificate request with issuer name {name}, {days} days validity period and 'is a CA certificate' flag set to {flag}.", issuerCertificateName, validityInDays, caCert);
 
             var pkcs10CertificationRequest = new Pkcs10CertificationRequest(certificateRequest);
 
@@ -81,9 +79,6 @@ namespace KeyVaultCa.Core
             }
 
             var info = pkcs10CertificationRequest.GetCertificationRequestInfo();
-
-            _logger.LogDebug("Certification request info is: {info}.", info.ToString());
-
             var notBefore = DateTime.UtcNow.AddDays(-1);
 
             var certBundle = await _keyVaultServiceClient.GetCertificateAsync(issuerCertificateName).ConfigureAwait(false);

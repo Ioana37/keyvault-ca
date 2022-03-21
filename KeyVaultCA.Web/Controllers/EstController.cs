@@ -81,8 +81,6 @@ namespace KeyVaultCA.Web.Controllers
             using var reader = new StreamReader(Request.Body, Encoding.UTF8);
             var body = await reader.ReadToEndAsync();
 
-            _logger.LogDebug("Request body is: {body} ", body.ToString());
-
             // Need to handle different types of Line Breaks
             var tokens = body.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             var token = tokens.Length > 1 ? string.Join(string.Empty, tokens) : tokens.FirstOrDefault();
