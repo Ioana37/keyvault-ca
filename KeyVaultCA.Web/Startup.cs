@@ -29,7 +29,7 @@ namespace KeyVaultCA.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddApplicationInsightsTelemetry();
             var caConfig = new CAConfiguration();
 
             var keyVaultServiceClient = new KeyVaultServiceClient(caConfig.KeyVaultUrl);

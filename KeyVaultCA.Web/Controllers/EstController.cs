@@ -34,7 +34,7 @@ namespace KeyVaultCA.Web.Controllers
         [Route("ca/.well-known/est/cacerts")]
         public async Task<IActionResult> GetCACertsAsync()
         {
-            _logger.LogDebug("Call 'CA certs' endpoint");
+            _logger.LogDebug("Call 'CA certs' endpoint.");
             var caCerts = await _keyVaultCertProvider.GetPublicCertificatesByName(new[] { _configuration.IssuingCA });
             var pkcs7 = EncodeCertificatesAsPkcs7(caCerts.ToArray());
 
@@ -48,15 +48,15 @@ namespace KeyVaultCA.Web.Controllers
         [Consumes(PKCS10_MIME_TYPE)]
         public async Task<IActionResult> EnrollAsync()
         {
-            _logger.LogDebug("Call 'Simple Enroll' endpoint");
+            _logger.LogDebug("Call 'Simple Enroll' endpoint.");
 
             var cleanedUpBody = await GetAsn1StructureFromBody();
 
-            _logger.LogDebug("cleanedUpBody {body} ", cleanedUpBody);
+            _logger.LogDebug("Request body is: {body}.", cleanedUpBody);
 
             var caCert = Request.Path.StartsWithSegments("/ca");
 
-            _logger.LogInformation("Is a CA certificate: {flag} ", caCert);
+            _logger.LogInformation("Is a CA certificate: {flag}.", caCert);
 
             var cert = await _keyVaultCertProvider.SigningRequestAsync(
                 Convert.FromBase64String(cleanedUpBody), _configuration.IssuingCA, _configuration.CertValidityInDays, caCert);

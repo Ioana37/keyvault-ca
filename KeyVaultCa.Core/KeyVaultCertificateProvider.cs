@@ -44,12 +44,11 @@ namespace KeyVaultCa.Core
 
         public async Task<IList<X509Certificate2>> GetPublicCertificatesByName(IEnumerable<string> certNames)
         {
-            _logger.LogDebug("Call GetPublicCertificatesByName method with following certificate names");
             var certs = new List<X509Certificate2>();
 
             foreach (var issuerName in certNames)
             {
-                _logger.LogDebug("Certificate issuer name: {name}", issuerName);
+                _logger.LogDebug("Call GetPublicCertificatesByName method with following certificate name: {name}.", issuerName);
                 var cert = await GetCertificateAsync(issuerName).ConfigureAwait(false);
 
                 if (cert != null)
@@ -70,9 +69,9 @@ namespace KeyVaultCa.Core
             int validityInDays,
             bool caCert = false)
         {
-            _logger.LogInformation("Preparing certificate request with {name} issuer name, {days} days validity period and is a CA certificate flag set to {flag} ", issuerCertificateName, validityInDays, caCert);
+            _logger.LogInformation("Preparing certificate request with the name {name}, {days} days validity period and 'is a CA certificate' flag set to {flag}.", issuerCertificateName, validityInDays, caCert);
 
-            _logger.LogDebug("The content of the certificate request is: {content} ", certificateRequest.ToString());
+            _logger.LogDebug("The content of the certificate request is: {content}.", certificateRequest.ToString());
 
             var pkcs10CertificationRequest = new Pkcs10CertificationRequest(certificateRequest);
 
@@ -83,7 +82,7 @@ namespace KeyVaultCa.Core
 
             var info = pkcs10CertificationRequest.GetCertificationRequestInfo();
 
-            _logger.LogDebug("Certification request info is:  {info}", info.ToString());
+            _logger.LogDebug("Certification request info is: {info}.", info.ToString());
 
             var notBefore = DateTime.UtcNow.AddDays(-1);
 
