@@ -56,7 +56,7 @@ namespace KeyVaultCA
         {
             var keyVaultServiceClient = new KeyVaultServiceClient(o.KeyVaultUrl);
             keyVaultServiceClient.SetAuthenticationClientCredential(o.AppId, o.Secret);
-            var kvCertProvider = new KeyVaultCertificateProvider(keyVaultServiceClient);
+            var kvCertProvider = new KeyVaultCertificateProvider(keyVaultServiceClient, null);
 
             if (o.IsRootCA)
             {

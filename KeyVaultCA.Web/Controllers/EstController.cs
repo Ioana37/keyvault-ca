@@ -85,14 +85,9 @@ namespace KeyVaultCA.Web.Controllers
 
             // Need to handle different types of Line Breaks
             var tokens = body.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            var token = tokens.Length > 1 ? string.Join(string.Empty, tokens) : tokens.FirstOrDefault();
 
-            if (tokens.Length > 1)
-            {
-                return string.Join("", tokens);
-            }
-            var token = tokens.FirstOrDefault();
-
-            _logger.LogDebug("The first (or default) token is: {token} ", token);
+            _logger.LogDebug("Returning token: {token} ", token);
 
             return token;
         }
