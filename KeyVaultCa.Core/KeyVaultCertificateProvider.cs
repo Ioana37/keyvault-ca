@@ -23,8 +23,14 @@ namespace KeyVaultCa.Core
         {
             var certVersions = await _keyVaultServiceClient.GetCertificateVersionsAsync(issuerCertificateName).ConfigureAwait(false);
 
-            if (!certVersions.Any())
+            if(certVersions.Any())
             {
+                _logger.LogInformation("A certificate with the specified issuer name {name} already exists.", issuerCertificateName);
+            }
+
+            else
+            {
+                _logger.LogInformation("No existing certificate found, starting to create a new one.");
                 var notBefore = DateTime.UtcNow.AddDays(-1);
                 await _keyVaultServiceClient.CreateCACertificateAsync(
                         issuerCertificateName,
@@ -33,6 +39,7 @@ namespace KeyVaultCa.Core
                         notBefore.AddMonths(48), 
                         4096, 
                         256);
+                _logger.LogInformation("A new certificate with issuer name {name} was created succsessfully.", issuerCertificateName);
             }
         }
 
@@ -75,6 +82,7 @@ namespace KeyVaultCa.Core
 
             if (!pkcs10CertificationRequest.Verify())
             {
+                _logger.LogError("CSR signature invalid.");
                 throw new ArgumentException("CSR signature invalid.");
             }
 
