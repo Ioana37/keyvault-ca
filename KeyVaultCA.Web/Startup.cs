@@ -30,26 +30,24 @@ namespace KeyVaultCA.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry();
-            var caConfig = new CAConfiguration();
 
-            var keyVaultServiceClient = new KeyVaultServiceClient(caConfig.KeyVaultUrl);
-            keyVaultServiceClient.SetAuthenticationClientCredential(caConfig.AppId, caConfig.Secret);
+            var estConfig = new EstConfiguration();
+            Configuration.Bind("KeyVault", estConfig);
+            services.AddSingleton(estConfig);
 
-            services.AddSingleton(keyVaultServiceClient);
-
+            services.AddSingleton<KeyVaultServiceClient>();
             services.AddSingleton<IKeyVaultCertificateProvider, KeyVaultCertificateProvider>();
-            services.AddSingleton(caConfig);
 
             services.AddControllers();
 
             services.AddScoped<IUserService, UserService>();
 
-            if (caConfig.AuthMode == AuthMode.Basic)
+            if (estConfig.AuthMode == AuthMode.Basic)
             {
                 services.AddAuthentication("BasicAuthentication")
                     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
             }
-            else if (caConfig.AuthMode == AuthMode.x509)
+            else if (estConfig.AuthMode == AuthMode.x509)
             {
                 services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
                    .AddCertificate(options =>

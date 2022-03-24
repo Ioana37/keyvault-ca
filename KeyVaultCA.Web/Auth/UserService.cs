@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using KeyVaultCa.Core;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,15 +13,15 @@ namespace KeyVaultCA.Web.Auth
 
     public class UserService : IUserService
     {
-        private readonly CAConfiguration _confuguration;
+        private readonly EstConfiguration _configuration;
         private readonly List<User> _users;
 
-        public UserService(CAConfiguration confuguration)
+        public UserService(EstConfiguration configuration)
         {
-            _confuguration = confuguration;
+            _configuration = configuration;
             _users = new()
             {
-                new User { Id = 1, FirstName = "Max", LastName = "Mustermann", Username = _confuguration.EstUsername, Password = _confuguration.EstPassword }
+                new User { Id = 1, FirstName = "Max", LastName = "Mustermann", Username = _configuration.EstUsername, Password = _configuration.EstPassword }
             };
         }
 
