@@ -26,13 +26,12 @@ namespace KeyVaultCA.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.ConfigureKestrel(o =>
+                    webBuilder.ConfigureKestrel((context, options) =>
                     {
-                        var estAuthentication = new AuthConfiguration();
-
+                        var estAuthentication = context.Configuration.GetSection("EstAuthentication").Get<AuthConfiguration>();
                         if (estAuthentication.AuthMode == AuthMode.x509)
                         {
-                            o.ConfigureHttpsDefaults(o => o.ClientCertificateMode = ClientCertificateMode.RequireCertificate);
+                            options.ConfigureHttpsDefaults(o => o.ClientCertificateMode = ClientCertificateMode.RequireCertificate);
                         }
                     });
                 });
