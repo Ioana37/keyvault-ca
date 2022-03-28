@@ -1,4 +1,4 @@
-using KeyVaultCa.Core;
+using KeyVaultCA.Web.Auth;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
@@ -28,9 +28,9 @@ namespace KeyVaultCA.Web
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureKestrel(o =>
                     {
-                        var estConfig = new EstConfiguration();
+                        var estAuthentication = new AuthConfiguration();
 
-                        if (estConfig.AuthMode == AuthMode.x509)
+                        if (estAuthentication.AuthMode == AuthMode.x509)
                         {
                             o.ConfigureHttpsDefaults(o => o.ClientCertificateMode = ClientCertificateMode.RequireCertificate);
                         }
