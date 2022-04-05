@@ -101,7 +101,7 @@ namespace KeyVaultCa.Core
                 256,
                 signingCert,
                 publicKey,
-                new KeyVaultSignatureGenerator(_keyVaultServiceClient.Credential, certBundle.Value.KeyId, signingCert),  //new KeyVaultSignatureGenerator(_keyVaultServiceClient, certBundle.KeyIdentifier.Identifier, signingCert),
+                new KeyVaultSignatureGenerator(_keyVaultServiceClient.Credential, certBundle.Value.KeyId, signingCert),
                 caCert
                 );
         }
