@@ -165,6 +165,5 @@ namespace KeyVaultCa.Core
 
             return result.Signature;
         }
-
     }
 }

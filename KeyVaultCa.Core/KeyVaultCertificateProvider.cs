@@ -22,7 +22,7 @@ namespace KeyVaultCa.Core
         {
             var certVersions = await _keyVaultServiceClient.GetCertificateVersionsAsync(issuerCertificateName).ConfigureAwait(false);
 
-            if(certVersions != 0)
+            if (certVersions != 0)
             {
                 _logger.LogInformation("A certificate with the specified issuer name {name} already exists.", issuerCertificateName);
             }
@@ -35,8 +35,8 @@ namespace KeyVaultCa.Core
                         issuerCertificateName,
                         subject,
                         notBefore,
-                        notBefore.AddMonths(48), 
-                        4096, 
+                        notBefore.AddMonths(48),
+                        4096,
                         256);
                 _logger.LogInformation("A new certificate with issuer name {name} was created succsessfully.", issuerCertificateName);
             }
@@ -70,8 +70,8 @@ namespace KeyVaultCa.Core
         /// Creates a KeyVault signed certficate from signing request.
         /// </summary>
         public async Task<X509Certificate2> SigningRequestAsync(
-            byte[] certificateRequest, 
-            string issuerCertificateName, 
+            byte[] certificateRequest,
+            string issuerCertificateName,
             int validityInDays,
             bool caCert = false)
         {

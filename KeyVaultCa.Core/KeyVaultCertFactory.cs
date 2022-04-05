@@ -51,7 +51,7 @@ namespace KeyVaultCa.Core
             var request = new CertificateRequest(subjectDN, publicKey, GetRSAHashAlgorithmName(hashSizeInBits), RSASignaturePadding.Pkcs1);
 
             var pathLengthConstraint = 0;
-            if(caCert)
+            if (caCert)
             {
                 pathLengthConstraint = 1;
             }
