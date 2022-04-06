@@ -163,7 +163,7 @@ namespace KeyVaultCa.Core
         /// Convert a hex string to a byte array.
         /// </summary>
         /// <param name="hexString">The hex string</param>
-        internal static byte[] HexToByteArray(string hexString)
+        private static byte[] HexToByteArray(string hexString)
         {
             byte[] bytes = new byte[hexString.Length / 2];
 

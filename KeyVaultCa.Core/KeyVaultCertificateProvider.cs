@@ -1,3 +1,8 @@
+// ------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// ------------------------------------------------------------
+
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Pkcs;
 using System;
@@ -69,7 +74,7 @@ namespace KeyVaultCa.Core
         /// <summary>
         /// Creates a KeyVault signed certficate from signing request.
         /// </summary>
-        public async Task<X509Certificate2> SigningRequestAsync(
+        public async Task<X509Certificate2> SignRequestAsync(
             byte[] certificateRequest,
             string issuerCertificateName,
             int validityInDays,
