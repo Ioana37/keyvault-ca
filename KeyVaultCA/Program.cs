@@ -63,6 +63,12 @@ namespace KeyVaultCA
                     Environment.Exit(1);
                 }
 
+                if (estConfig.CertValidityInDays <= 0 || estConfig.CertValidityInDays > 365)
+                {
+                    logger.LogError("Number of days specified as the certificate validity period should be between 1 and 365.");
+                    Environment.Exit(1);
+                }
+
                 // Issue device certificate
                 var csr = File.ReadAllBytes(csrConfig.PathToCsr);
                 var cert = await kvCertProvider.SignRequestAsync(csr, estConfig.IssuingCA, estConfig.CertValidityInDays);
