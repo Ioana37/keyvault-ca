@@ -41,6 +41,7 @@ namespace KeyVaultCa.Core
                 DateTime notAfter,
                 int keySize,
                 int hashSize,
+                int certPathLength,
                 CancellationToken ct = default)
         {
             try
@@ -116,7 +117,8 @@ namespace KeyVaultCa.Core
                     null,
                     publicKey,
                     new KeyVaultSignatureGenerator(Credential, createdCertificateBundle.Value.KeyId, null),
-                    true);
+                    true,
+                    certPathLength);
 
                 // merge Root CA cert with the signed certificate
                 _logger.LogDebug("Merge Root CA certificate with the signed certificate.");

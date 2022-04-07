@@ -6,7 +6,7 @@ namespace KeyVaultCa.Core
 {
     public interface IKeyVaultCertificateProvider
     {
-        Task CreateCACertificateAsync(string issuerCertificateName, string subject);
+        Task CreateCACertificateAsync(string issuerCertificateName, string subject, int certPathLength);
 
         Task<IList<X509Certificate2>> GetPublicCertificatesByName(IEnumerable<string> certNames);
 

@@ -23,7 +23,7 @@ namespace KeyVaultCa.Core
             _logger = logger;
         }
 
-        public async Task CreateCACertificateAsync(string issuerCertificateName, string subject)
+        public async Task CreateCACertificateAsync(string issuerCertificateName, string subject, int certPathLength)
         {
             var certVersions = await _keyVaultServiceClient.GetCertificateVersionsAsync(issuerCertificateName).ConfigureAwait(false);
 
@@ -42,8 +42,9 @@ namespace KeyVaultCa.Core
                         notBefore,
                         notBefore.AddMonths(48),
                         4096,
-                        256);
-                _logger.LogInformation("A new certificate with issuer name {name} was created succsessfully.", issuerCertificateName);
+                        256,
+                        certPathLength);
+                _logger.LogInformation("A new certificate with issuer name {name} and path length {path} was created succsessfully.", issuerCertificateName, certPathLength);
             }
         }
 

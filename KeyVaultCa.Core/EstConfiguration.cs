@@ -7,5 +7,7 @@ namespace KeyVaultCa.Core
         public string IssuingCA { get; set; }
 
         public int CertValidityInDays { get; set; } = 365;
+
+        public int CertPathLength { get; set; }
     }
 }
