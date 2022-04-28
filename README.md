@@ -31,6 +31,8 @@ and then give it accesss to the Key Vault keys and certificates:
 
 # Getting Started
 
+>**Note:** The quickest way to setup dev environment is by opening this solution in VSCode which will allow leveraging the dev container provided in this repo.
+
 Clone this repository. There are two projects (`KeyVaultCA` and `KeyVaultCA.Web`) containing `appsettings.json` files. The settings specified there can also be overridden with environment variables or command line arguments.
 The following common block must be filled in, for all usages of the projects.
 ```
@@ -98,7 +100,7 @@ Provide the following variables in the `appsettings.json` of the `KeyVaultCA.Web
     - ```EstUsername``` - username for the EST endpoint
     - ```EstPassword``` - password for the EST endpoint 
 - **x509** - via certificates
-    - put your trusted CA certificates into the ```KeyVaultCA.Web\TrustedCAs``` folder. Make sure to specify CopyToOutput. Note that certificates downloaded from Azure Key Vault are by default encoded as a base64 string.  
+    - put your trusted CA certificates into the ```KeyVaultCA.Web\TrustedCAs``` directory. Make sure to specify CopyToOutput. Note that certificates downloaded from Azure Key Vault are by default encoded as a base64 string.  
    -  if you choose to publish the ```KeyVaultCA.Web``` app to an Azure App Service, make sure to go to **Configuration** -> **General Setttings** -> **Incoming client certificates** -> set **Client certificate mode** to `Require`. 
 
 To ensure that the published Web API can access the Key Vault, go to the App Service that will host the `KeyVaultCA.Web`, click on **Identity** and turn on the `System-Assigned` one. 
@@ -116,8 +118,24 @@ The `KeyVaultCA` console app uses a Console logger, for which the severity can b
 
 The `KeyVaultCA.Web` writes logs to an Azure Application Insights instance, for which the connection string must be added in the `appsettings.json`. Additionally, the logging must be turned on from the Azure portal by going to the Web App and into the Application Insights settings.
 
-## Terraform
+## Infrastructure as code
 
-The Terraform scripts listed under the `terraform` folder can be used to deploy the infrastructure required for E2E testing to an Azure environment. This deployment includes an App Service for the EST server to run in using an image pulled from Azure Container Registry, an Azure Key Vault for storing the Root CA and an IoT Hub, Device Provisioning Service and a Linux VM simulating an IoT Edge device. The infrastructure can be deployed by cd'ing into the `terraform` folder and then running `terraform init` followed by `terraform apply`. Terraform will use the logged in Azure user credentials and subsequent subscription to deploy the resources to. 
+The Terraform scripts listed under the `terraform` directory can be used to deploy the infrastructure required for E2E testing to an Azure environment. This deployment includes an App Service for the EST server to run in using an image pulled from Azure Container Registry, an Azure Key Vault for storing the Root CA and an IoT Hub, Device Provisioning Service and a Linux VM simulating an IoT Edge device. The Terraform template uses `dotnet run` to execute the API Facade Console App, hence installing the [.NET Runtime 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) is required. The infrastructure can be deployed by cd'ing into the `terraform` directory and then running `terraform init` followed by `terraform apply`. Terraform will use the [logged in Azure user credentials](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) and subsequent subscription to deploy the resources to.
 
-Currently only the `Basic` option for authenticating to the EST server using username and password is supported in these Terraform scripts.
+## Authenticating to the EST server using certificates
+
+### Terraform
+The authentication mode is currently set to be `x509`, which means using certificates for authenticating to the EST server.
+
+If you want to use `Basic` authentication with username and password, then you would need to replace the default value of `auth_mode` within `/terraform/variables.tf` from `"x509"` to `"Basic"` and ensure that the `[cert_issuance.est.auth]` section in `cloud-init.yaml` looks like this:
+```
+      [cert_issuance.est.auth]
+      username = "${EST_USERNAME}"
+      password = "${EST_PASSWORD}"
+      
+      #identity_cert = "file:///etc/aziot/estauth.pem"
+      #identity_pk = "file:///etc/aziot/estauth.key.pem"
+```
+
+### Using ForwardedHeaders
+When the user selects the certificate authentication mode for EST server, the code uses [Header Forwarding](https://github.com/machteldbogels/keyvault-ca/blob/master/KeyVaultCA.Web/Startup.cs#L107) to forward the used protocol to the App Service and ensure that the client certificate is negotiated as part of a TLS handshake. More details on the usage of header forwarding can be found [here](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-6.0#forwarded-headers).

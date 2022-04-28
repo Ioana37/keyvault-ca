@@ -14,19 +14,18 @@ variable "keyvault_url" {
   type = string
 }
 
-variable "authmode" {
-  type    = string
-  default = "Basic"
+variable "auth_mode" {
+  type = string
 }
 
-variable "est_user" {
+variable "est_username" {
   type    = string
-  default = "foo"
+  default = "azureuser"
 }
 
 variable "est_password" {
   type    = string
-  default = "bar"
+  default = ""
 }
 
 variable "issuing_ca" {
@@ -38,19 +37,11 @@ variable "cert_validity_in_days" {
   default = "365"
 }
 
-variable "acr_name" {
+variable "acr_id" {
   type = string
 }
 
 variable "acr_login_server" {
-  type = string
-}
-
-variable "acr_admin_username" {
-  type = string
-}
-
-variable "acr_admin_password" {
   type = string
 }
 
